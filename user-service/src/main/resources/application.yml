@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: user-service # 服务名称
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848
+        ip: ${SPRING_CLOUD_NACOS_DISCOVERY_IP:user-service}
+        namespace: public
+        register-enabled: true
+        heart-beat-timeout: 15000
+        heart-beat-interval: 5000
+  datasource:
+    url: jdbc:mysql://mysql:3306/memeforge?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: redis
+      port: 6379
+      database: 0
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+  session:
+    store-type: redis
+    redis:
+      namespace: memeforge:session
+
+server:
+  port: 8081 # 服务端口
+  servlet:
+    context-path: /
+    session:
+      cookie:
+        name: MEMEFORGE_SESSION
+        path: /
+        domain: 43.163.81.86
+        http-only: true
+        secure: false
+        same-site: lax
+      timeout: 30m
+
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0

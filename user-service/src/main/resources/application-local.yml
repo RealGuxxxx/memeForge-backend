@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: user-service # 服务名称
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        ip: 127.0.0.1
+        namespace: public
+        register-enabled: true
+        heart-beat-timeout: 15000
+        heart-beat-interval: 5000
+  datasource:
+    url: jdbc:mysql://localhost:3306/meme_forge?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 12345678
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+  session:
+    store-type: redis
+    redis:
+      namespace: memeforge:session
+  # 禁用Bean验证（临时解决方案）
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false # 忽略JSON中未知属性
+  # 增加Spring MVC的日志级别
+  mvc:
+    log-request-details: true
+
+server:
+  port: 8081 # 服务端口
+  servlet:
+    context-path: /
+    session:
+      cookie:
+        name: MEMEFORGE_SESSION
+        path: /
+        domain: 43.163.81.86 # 修改为实际的服务器域名，与前端访问的域名匹配
+        http-only: true
+        secure: false
+        same-site: lax
+      timeout: 30m
+  error:
+    include-message: always # 在错误响应中包含异常消息
+    include-binding-errors: always # 在错误响应中包含参数绑定错误
+    include-stacktrace: never # 不在响应中包含堆栈跟踪
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.http.converter: DEBUG
+    org.springframework.web.servlet.mvc: DEBUG
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  # 添加类型处理器配置
+  type-handlers-package: com.memeforge.userservice.config.typehandler

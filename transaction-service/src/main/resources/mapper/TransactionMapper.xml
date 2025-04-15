@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.memeforge.transactionservice.mapper.TransactionMapper">
+
+    <resultMap id="BaseResultMap" type="com.memeforge.transactionservice.model.entity.Transaction">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tokenAddress" column="token_address" jdbcType="VARCHAR"/>
+            <result property="userAddress" column="user_address" jdbcType="VARCHAR"/>
+            <result property="amount" column="amount" jdbcType="DECIMAL"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="transactionType" column="transaction_type" jdbcType="VARCHAR"/>
+            <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+            <result property="transactionHash" column="transaction_hash" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,token_address,user_address,
+        amount,price,transaction_type,created_at,
+        transaction_hash
+    </sql>
+</mapper>

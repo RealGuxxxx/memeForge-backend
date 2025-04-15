@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.memeforge.tokenservice.mapper.TokenMapper">
+
+    <resultMap id="BaseResultMap" type="com.memeforge.tokenservice.model.entity.Token">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="symbol" column="symbol" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="totalSupply" column="total_supply" jdbcType="BIGINT"/>
+            <result property="ipfsCid" column="ipfs_CID" jdbcType="VARCHAR"/>
+            <result property="creatorId" column="creator_id" jdbcType="BIGINT"/>
+            <result property="tokenAddress" column="token_address" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="BIGINT"/>
+            <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,symbol,
+        description,total_supply,ipfs_CID,
+        creator_id,token_address,`status`,
+        created_at
+    </sql>
+</mapper>

@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: api-gateway # 服务名称
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos:8848 # 使用容器名而非localhost
+        ip: ${SPRING_CLOUD_NACOS_DISCOVERY_IP:api-gateway}
+        namespace: public
+        register-enabled: true
+        heart-beat-timeout: 15000
+        heart-beat-interval: 5000
+    gateway:
+      discovery:
+        locator:
+          enabled: true # 启用服务发现定位器
+          lower-case-service-id: true # 服务ID小写
+      routes:
+        # 用户服务路由
+        - id: user-service-route
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - PreserveHostHeader
+            - AddResponseHeader=X-Routed-By, user-service-gateway
+
+        # 代币服务路由
+        - id: token-service-route
+          uri: lb://token-service
+          predicates:
+            - Path=/api/v1/tokens/**
+          filters:
+            - PreserveHostHeader
+            - AddResponseHeader=X-Routed-By, token-service-gateway
+
+        # 代币持仓服务路由
+        - id: token-holdings-service-route
+          uri: lb://token-service
+          predicates:
+            - Path=/api/v1/token-holdings/**
+          filters:
+            - PreserveHostHeader
+            - AddResponseHeader=X-Routed-By, token-holdings-gateway
+
+        # 交易服务路由
+        - id: transaction-service-route
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/v1/transactions/**
+          filters:
+            - PreserveHostHeader
+            - AddResponseHeader=X-Routed-By, transaction-service-gateway
+
+        # 兼容直接服务名访问的路由
+        - id: service-by-name-route
+          uri: lb://${path_route:service}
+          predicates:
+            - Path=/{service:[a-z-]+}-service/{segment:.*}
+          filters:
+            - RewritePath=/{service}-service/(?<segment>.*), /$\{segment}
+            - AddResponseHeader=X-Direct-Service-Route, true
+
+      # 日志和请求大小限制
+      default-filters:
+        - name: RequestSize
+          args:
+            maxSize: 5MB
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+
+      # CORS配置
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "*"
+            allowedMethods: "GET,POST,PUT,DELETE,OPTIONS"
+            allowedHeaders: "*"
+            exposedHeaders: "Authorization, Content-Disposition"
+            allowCredentials: false
+            maxAge: 3600
+
+server:
+  port: 8080 # 服务端口
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG # 开启网关日志便于调试
+    org.springframework.http.server.reactive: DEBUG # 开启更多调试日志
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # 暴露所有 Actuator 端点

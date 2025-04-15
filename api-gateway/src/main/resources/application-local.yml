@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: api-gateway 
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848 # 使用本地Nacos地址
+        ip: 127.0.0.1
+        namespace: public
+        register-enabled: true
+        heart-beat-timeout: 15000
+        heart-beat-interval: 5000
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+        - id: token-service
+          uri: lb://token-service
+          predicates:
+            - Path=/api/token/**
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/transaction/**
+      default-filters:
+        - StripPrefix=1 
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+server:
+  port: 8080 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" 
